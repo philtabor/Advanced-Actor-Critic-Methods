@@ -87,19 +87,14 @@ class Agent:
                 new_probs = dist.log_prob(actions)
                 prob_ratio = T.exp(new_probs.sum(1, keepdim=True) - old_probs.
                                    sum(1, keepdim=True))
-                print('probs ratio', prob_ratio.shape)
                 weighted_probs = adv[batch] * prob_ratio
                 weighted_clipped_probs = T.clamp(
                         prob_ratio, 1-self.policy_clip, 1+self.policy_clip) * \
                     adv[batch]
-                print('weighted clipped probs', weighted_clipped_probs.shape)
                 entropy = dist.entropy().sum(1, keepdims=True)
-                print('entropy', entropy.shape)
                 actor_loss = -T.min(weighted_probs,
                                     weighted_clipped_probs)
                 actor_loss -= self.entropy_coefficient * entropy
-                print('actor loss', actor_loss.shape)
-                exit()
                 self.actor.optimizer.zero_grad()
                 actor_loss.mean().backward()
                 T.nn.utils.clip_grad_norm_(self.actor.parameters(), 40)
