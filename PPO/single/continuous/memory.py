@@ -22,11 +22,9 @@ class PPOMemory:
 
     def generate_batches(self):
         n_states = len(self.states)
-        # batch_start = np.arange(0, n_states, self.batch_size)
         n_batches = int(n_states // self.batch_size)
         indices = np.arange(n_states, dtype=np.int64)
         np.random.shuffle(indices)
-        # batches = [indices[i:i+self.batch_size] for i in batch_start]
         batches = [indices[i*self.batch_size:(i+1)*self.batch_size]
                    for i in range(n_batches)]
         return batches
